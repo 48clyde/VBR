@@ -1,10 +1,12 @@
 version: '3'
 services:
   #
-  # The LMS server that provides the UI on port 9000 
+  # The LMS server that provides the familar UI on port 9000 
   #
   # The first time this is accessed, it will need to be 
   # configured for the locations of the music and playlists
+  #
+  # These settings will be stored in state
   #
   lms:
     image: justifiably/logitechmediaserver
@@ -13,10 +15,12 @@ services:
       - "9090:9090"
       - "3483:3483"
       - "3483:3483/udp"
+      - "1900:1900"
     volumes:
       - /home/${USER}/Music:/mnt/music:ro
       - /home/${USER}/Music/playlists:/mnt/playlists
-  
+      - /home/${USER}/Music/state:/mnt/state
+      
   #
   # A media player on the local machine that LMS will find and
   # use for playback of the media files.

@@ -13,7 +13,8 @@ RUN apt-get update -y && \
   apt-get remove -qy postfix && \
   apt-get -qy clean && \
   apt-get -qy purge && \
-  apt-get -qy autoremove
+  apt-get -qy autoremove && \
+  rm -rf /var/lib/apt/lists/*
 
 #
 # copy into the container the custom conf and the main
