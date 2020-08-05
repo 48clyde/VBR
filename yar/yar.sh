@@ -9,7 +9,8 @@
 #
 # Then wait for the next disk to be inserted.
 #
-#
+
+
 while true; do
     #
     # Check the state of the cd drive with setcd, that doesn't 

@@ -1,14 +1,15 @@
 version: '3'
 services:
   #
-  # The LMS server that provides the familar UI on port 9000 
+  # The LMS server that provides the familar UI on port 9000,
+  # and the cli on port 9090.  3483 is the SlimProt and 1900
+  # is the UPnP/Discovery mechanism.
   #
   # The first time this is accessed, it will need to be 
-  # configured for the locations of the music and playlists
-  #
-  # These settings will be stored in state
+  # configured for the locations of the music and playlists.
   #
   lms:
+    restart: unless-stopped
     image: justifiably/logitechmediaserver
     ports:
       - "9000:9000"
@@ -17,40 +18,75 @@ services:
       - "3483:3483/udp"
       - "1900:1900"
     volumes:
+      #
+      # Use the music files stored in the users Music 
+      # directory. Keep all the other related files in there 
+      # too.  
+      #
       - /home/${USER}/Music:/mnt/music:ro
       - /home/${USER}/Music/playlists:/mnt/playlists
       - /home/${USER}/Music/state:/mnt/state
       
+      
   #
   # A media player on the local machine that LMS will find and
-  # use for playback of the media files.
+  # use for playback of the media files.  Could have multiple 
+  # of these defined if there were multiple sound cards or 
+  # DACs. Would need to give them different container and 
+  # player names.
+  #
+  # Use aplay -l to find the audio OUTPUT_DEVICE.  Suspect the
+  # format is card #, device #
+  #
+  # e.g.
+  # card 0: PCH [HDA Intel PCH], device 0: VT2020 Analog [VT2020 Analog]
+  # hw:0,0 is card 0, subdevice 0
   #
   squeezelite:
+    restart: unless-stopped
     image: aschamberger/squeezelite
     environment:
-      - PLAYER=localsqueeze
+      - PLAYER=LocalSqueeze
       - OUTPUT_DEVICE=hw:0,0
     devices:
       - "/dev/snd/:/dev/snd/"
   
+  
+  #
+  # YAR - Yet Another Ripper
   #
   # The CD ripper that will monitor the CDROM drive for 
   # inserted audio disks.
   #
+  # The ripper's /out directory is mapped to the same directory
+  # that LMS looks in for media, i.e. /home/${USER}/Music
+  #
   # Note, need to give the ripper container access to the
   # CDROM device and then tell it what device to use.
   #
-  # The LMS_HOST and LMS_PORT are needed for the ripper to 
-  # be able to contact LMS and tell it to rescan the contents 
-  # of /mnt/music so that the newly ripped files are detected.
+  # USER_ID and GROUP_ID are used to set the ripped file 
+  # owner:group rather than the default root:root of the
+  # ripper process.  This has to be specified as the id's and 
+  # not as names because within the container the user names 
+  # and group names don't exist.  Use the 'id' command to find 
+  # the correct id's to use on the host.
+  #
+  # The LMS_HOST (i.e the service name above) and LMS_PORT are 
+  # used by the ripper to be able to contact LMS and tell it 
+  # to rescan the contents of /mnt/music so that the newly 
+  # ripped files are detected and indexed.  If the server 
+  # cannot be found, it silently times out and LMS won't know 
+  # about the new files unless the use through the UI initiates
+  # a rescan.
   #
   ripper:
+    restart: unless-stopped
     build:
         context: ./yar
     environment: 
       - CDROM=/dev/sr0
-      - USER_ID=${USER}
-      - GROUP_ID=${USER}
+      - USER_ID=${UID}
+      - GROUP_ID=${UID}
       - LMS_HOST=lms
       - LMS_CLI_PORT=9090
     volumes:
