@@ -1,0 +1,56 @@
+version: '3'
+services:
+  #
+  # The LMS server that provides the UI on port 9000 
+  #
+  # The first time this is accessed, it will need to be 
+  # configured for the locations of the music and playlists
+  #
+  lms:
+    image: justifiably/logitechmediaserver
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+      - "3483:3483"
+      - "3483:3483/udp"
+    volumes:
+      - /home/${USER}/Music:/mnt/music:ro
+      - /home/${USER}/Music/playlists:/mnt/playlists
+  
+  #
+  # A media player on the local machine that LMS will find and
+  # use for playback of the media files.
+  #
+  squeezelite:
+    image: aschamberger/squeezelite
+    environment:
+      - PLAYER=localsqueeze
+      - OUTPUT_DEVICE=hw:0,0
+    devices:
+      - "/dev/snd/:/dev/snd/"
+  
+  #
+  # The CD ripper that will monitor the CDROM drive for 
+  # inserted audio disks.
+  #
+  # Note, need to give the ripper container access to the
+  # CDROM device and then tell it what device to use.
+  #
+  # The LMS_HOST and LMS_PORT are needed for the ripper to 
+  # be able to contact LMS and tell it to rescan the contents 
+  # of /mnt/music so that the newly ripped files are detected.
+  #
+  ripper:
+    build:
+        context: ./yar
+    environment: 
+      - CDROM=/dev/sr0
+      - USER_ID=${USER}
+      - GROUP_ID=${USER}
+      - LMS_HOST=lms
+      - LMS_CLI_PORT=9090
+    volumes:
+      - /home/${USER}/Music:/out:rw
+    devices:
+      - "/dev/sr0:/dev/sr0"
+      
