@@ -8,12 +8,14 @@ A docker container based replacement for VortexBox, providing the core VortexBox
 
 * **Ripper** - A CD ripper and tagger
 
-that can easily be deployed via docker on an existing Linux based host system.
+that is easily deployed via docker on an existing Linux based host system.
 
 
 [VortexBox](https://wiki.vortexbox.org/what_is_vortexbox) is a Fedora based Linux distribution that turns an unused computer into a music server.  The server will automatically rip inserted CD's to FLAC format, ID3 tag the files and download cover art.  These files are then shared multiple ways on the local network such as via SAMBA file sharing as well as through the Logitech Media Server(LMS) to LMS compliant devices.
 
-VortexBox provides a lot of functionality and has a lot of smarts to turn an old machine into a music server, from installing an operating system, configuring the machine, setting up the file system.  However the down side to this great functionality is the old version of the underlying OS being used limits the machine from being used for running other more contempory software and services.
+VortexBox provides a lot of functionality and has a lot of smarts to turn an old machine into a music server, from installing an operating system, configuring the machine, setting up the file system etc.  However the down side to this great functionality is the now unsupported version of the underlying OS being used limits the machine from being used for running other more contempory software and services.
+
+Therefore, using a recent version of Ubuntu with docker as a base platform, the core VortexBox can be replicated.
 
 
 ## Pre-requisites
@@ -62,14 +64,14 @@ The docker images need to be downloaded and built as per the definition in the d
 
 Start the docker compose group of containers as backgound processes.  By default they are configured to always restart (such as after a failure upon reboot) unless they've been explicitly stopped.
 
-    docker-compose --file=~/VBR/docker-compose.yml up -d
+    docker-compose --file=VBR/docker-compose.yml up -d
 
 
 ### Stopping the containers
 
 To stop all the VBR containers, use the command:
 
-    docker-compose --file=~/VBR/docker-compose.yml stop
+    docker-compose --file=VBR/docker-compose.yml stop
     
 Note: They will remain stopped even after rebooting, you will need to start them again with the start command.
 
@@ -78,12 +80,12 @@ Note: They will remain stopped even after rebooting, you will need to start them
 
 If you decide you don't want to use VBR, thanks to the magic of docker, you can stop and remove all these containers.  The LMS state directory where the database etc. that it builds is stored will need to be manually removed.
 
-    docker-compose --file=~/VBR/docker-compose.yml down
+    docker-compose --file=VBR/docker-compose.yml down
 
 
 ### Troubleshooting
 
-If things go wrong or are not working as expected, check that the containers are running and a review the logs for the containers.
+If things go wrong or are not working as expected, check that the containers are running and a review the logs for the docker containers.
 
 To see the docker containers currently running:
 
@@ -102,6 +104,20 @@ or to follow the tail on the logs:
 If you've made changes to any of the files such as docker-compose.yml, then the docker images will need to be re-built for the changes to be picked up.  So take down the containers to stop and remove them, build them again, then bring up the re-configured containers.
 
 
+Remember that the [docker website](https://docs.docker.com/get-started/) has lots of documentation, including a getting started guides, troubleshooting etc.
+
+
 ## Acknowledgements
 
-Like all projects, 
+Like all projects, they build upon the great work of others that allow amazing functionality used in different ways.  Therefore I'd like to acknowledge the great projects that I've been able to leverage for this project.
+
+
+*andrew* and the [VortexBox](https://www.vortexbox.org/) project.
+
+[justifiably](https://hub.docker.com/u/justifiably) for their docker image of the [Logitech Media Server](https://hub.docker.com/r/justifiably/logitechmediaserver/).
+
+
+[aschamberger](https://hub.docker.com/u/aschamberger) for their [squeezelite docker image](https://hub.docker.com/r/aschamberger/squeezelite) of [Ralph Irving](https://github.com/ralph-irving) and Adrian Smith's work.
+
+And of course the star of the show, the [Logitech Media Server](http://wiki.slimdevices.com/index.php/Logitech_Media_Server) from the team at slimdevices.
+

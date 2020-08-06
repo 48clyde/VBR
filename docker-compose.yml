@@ -68,8 +68,9 @@ services:
   # owner:group rather than the default root:root of the
   # ripper process.  This has to be specified as the id's and 
   # not as names because within the container the user names 
-  # and group names don't exist.  Use the 'id' command to find 
-  # the correct id's to use on the host.
+  # and group names don't exist.  By default Ubuntu uses 1000
+  # as the first user ID allocated, but use the 'id' command 
+  # to confirm the correct id's to use.
   #
   # The LMS_HOST (i.e the service name above) and LMS_PORT are 
   # used by the ripper to be able to contact LMS and tell it 
@@ -85,8 +86,8 @@ services:
         context: ./yar
     environment: 
       - CDROM=/dev/sr0
-      - USER_ID=${UID}
-      - GROUP_ID=${UID}
+      - USER_ID=1000
+      - GROUP_ID=1000
       - LMS_HOST=lms
       - LMS_CLI_PORT=9090
     volumes:
