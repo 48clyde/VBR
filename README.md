@@ -33,9 +33,9 @@ Therefore, using a recent version of Ubuntu with docker as a base platform, the 
 
 ## Installation
 
-###Pull down the code from github for VBR
+### Pull down the code from github for VBR
 
-    git pull https://github.com/48clyde/VBR
+    git clone https://github.com/48clyde/VBR
 
 
 ### Confirm the settings
