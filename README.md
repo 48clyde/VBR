@@ -8,6 +8,8 @@ A docker container based replacement for VortexBox, providing the core VortexBox
 
 * **Ripper** - A CD ripper and tagger
 
+* **FLAC Mirror** - Mirror flac files to mp3, m4a or ogg
+
 that is easily deployed via docker on an existing Linux based host system.
 
 
@@ -47,6 +49,8 @@ Check the default settings in the docker-compose.yml file.  Key items to check a
 * The sound output device used by SqueezeLite for playback, by default the first device on the first sound card.
 
 * The CDROM device, see /proc/sys/dev/cdrom/info for the drive name
+
+* The formats required to be mirrored.
 
 Other items of interest should all be well annotated and set with acceptable defaults.
 

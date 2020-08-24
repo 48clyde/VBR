@@ -95,3 +95,35 @@ services:
     devices:
       - "/dev/sr0:/dev/sr0"
       
+
+  #
+  # Mirror flac files to the spcified formats.
+  #
+  # Periodically scans the /flac directory for flac
+  # files that don't exist in the target format directories.
+  #
+  flac_mirror:
+    restart: unless-stopped
+    build:
+        context: ./flac-mirror
+    environment: 
+      # 
+      # A comma seperated list of what formats to mirror to.  
+      # NOTE: make sure that there is an appropriate volume mapped 
+      # for the file type to somewhere outside the container otherwise the
+      # mirrored files will be created inside the container where
+      # no one will be able to see them!
+      #
+      - MIRROR=M4A
+      #
+      # ffmpeg mirroring options that can be over-ridden
+      #
+      # - OGG_OPTIONS=-c:a libvorbis
+      # - M4A_OPTIONS=-c:a aac -b:a 192k -vn
+      # - MP3_OPTIONS=-c:a mp3 -ab 192k -map_metadata 0
+    volumes:
+      - /home/${USER}/Music:/flac:ro
+      - /home/${USER}/Music/mp3:/mp3:rw
+      - /home/${USER}/Music/m4a:/m4a:rw
+      - /home/${USER}/Music/ogg:/ogg:rw
+    

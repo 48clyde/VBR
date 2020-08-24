@@ -13,5 +13,12 @@ RUN apk add --no-cache ffmpeg
 # copy into the container script to manage the mirroring
 #
 COPY mirror.py /mirror.py
+#
+# The locations of the files for mirroring purposes.
+#
+RUN mkdir /flac && \
+   mkdir /mp3 && \
+   mkdir /m4a && \
+   mkdir /ogg
 
 ENTRYPOINT ["python", "/mirror.py"]
