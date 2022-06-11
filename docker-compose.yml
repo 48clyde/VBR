@@ -114,7 +114,8 @@ services:
       # mirrored files will be created inside the container where
       # no one will be able to see them!
       #
-      - MIRROR=M4A
+      #- MIRROR=M4A
+      - MIRROR=mp3
       #
       # ffmpeg mirroring options that can be over-ridden
       #
@@ -126,4 +127,3 @@ services:
       - /home/${USER}/Music/mp3:/mp3:rw
       - /home/${USER}/Music/m4a:/m4a:rw
       - /home/${USER}/Music/ogg:/ogg:rw
-    
