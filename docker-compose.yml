@@ -11,6 +11,8 @@ services:
   lms:
     restart: unless-stopped
     image: justifiably/logitechmediaserver
+    hostname: newsounds
+    user: 1000:1000 # Try to run as same user as ripper
     ports:
       - "9000:9000"
       - "9090:9090"
@@ -22,6 +24,11 @@ services:
       # Use the music files stored in the users Music 
       # directory. Keep all the other related files in there 
       # too.  
+      #
+      # For later: should we mount only flac? Or rely on LMS config to only
+      # use flac? How to handle crap we only have in MP3? IIRC, we already
+      # can configure LMS to only pay attention to flac if there's a pair...
+      # how does it decide on equivalence?
       #
       - /home/${USER}/Music:/mnt/music:ro
       - /home/${USER}/Music/playlists:/mnt/playlists
@@ -104,6 +111,7 @@ services:
   #
   flac_mirror:
     restart: unless-stopped
+    user: 1000:1000 # Should run as same user as ripper
     build:
         context: ./flac-mirror
     environment: 
