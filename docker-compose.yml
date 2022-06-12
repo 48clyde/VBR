@@ -12,7 +12,6 @@ services:
     restart: unless-stopped
     image: justifiably/logitechmediaserver
     hostname: newsounds
-    user: 1000:1000 # Try to run as same user as ripper
     ports:
       - "9000:9000"
       - "9090:9090"
@@ -49,14 +48,15 @@ services:
   # card 0: PCH [HDA Intel PCH], device 0: VT2020 Analog [VT2020 Analog]
   # hw:0,0 is card 0, subdevice 0
   #
-  squeezelite:
-    restart: unless-stopped
-    image: aschamberger/squeezelite
-    environment:
-      - PLAYER=LocalSqueeze
-      - OUTPUT_DEVICE=hw:0,0
-    devices:
-      - "/dev/snd/:/dev/snd/"
+#  squeezelite:
+#    restart: unless-stopped
+#    image: aschamberger/squeezelite
+#    hostname: media-player
+#    environment:
+#      - PLAYER=LocalSqueeze
+#      - OUTPUT_DEVICE=hw:0,0
+#    devices:
+#      - "/dev/snd/:/dev/snd/"
   
   
   #
@@ -93,8 +93,8 @@ services:
         context: ./yar
     environment: 
       - CDROM=/dev/sr0
-      - USER_ID=1000
-      - GROUP_ID=1000
+      - USER_ID=${USER} # postencode wants to add by name (useradd and groupadd). Hmm.
+      - GROUP_ID=${USER} # Using ubuntu convention, since this goes to groupadd. Also hmm.
       - LMS_HOST=lms
       - LMS_CLI_PORT=9090
     volumes:
@@ -109,29 +109,29 @@ services:
   # Periodically scans the /flac directory for flac
   # files that don't exist in the target format directories.
   #
-  flac_mirror:
-    restart: unless-stopped
-    user: 1000:1000 # Should run as same user as ripper
-    build:
-        context: ./flac-mirror
-    environment: 
-      # 
-      # A comma seperated list of what formats to mirror to.  
-      # NOTE: make sure that there is an appropriate volume mapped 
-      # for the file type to somewhere outside the container otherwise the
-      # mirrored files will be created inside the container where
-      # no one will be able to see them!
-      #
-      #- MIRROR=M4A
-      - MIRROR=mp3
-      #
-      # ffmpeg mirroring options that can be over-ridden
-      #
-      # - OGG_OPTIONS=-c:a libvorbis
-      # - M4A_OPTIONS=-c:a aac -b:a 192k -vn
-      # - MP3_OPTIONS=-c:a mp3 -ab 192k -map_metadata 0
-    volumes:
-      - /home/${USER}/Music:/flac:ro
-      - /home/${USER}/Music/mp3:/mp3:rw
-      - /home/${USER}/Music/m4a:/m4a:rw
-      - /home/${USER}/Music/ogg:/ogg:rw
+#  flac_mirror:
+#    restart: unless-stopped
+#    user: 1000:1000 # Should run as same user as ripper
+#    build:
+#        context: ./flac-mirror
+#    environment: 
+#      # 
+#      # A comma seperated list of what formats to mirror to.  
+#      # NOTE: make sure that there is an appropriate volume mapped 
+#      # for the file type to somewhere outside the container otherwise the
+#      # mirrored files will be created inside the container where
+#      # no one will be able to see them!
+#      #
+#      #- MIRROR=M4A
+#      - MIRROR=mp3
+#      #
+#      # ffmpeg mirroring options that can be over-ridden
+#      #
+#      # - OGG_OPTIONS=-c:a libvorbis
+#      # - M4A_OPTIONS=-c:a aac -b:a 192k -vn
+#      # - MP3_OPTIONS=-c:a mp3 -ab 192k -map_metadata 0
+#    volumes:
+#      - /home/${USER}/Music:/flac:ro
+#      - /home/${USER}/Music/mp3:/mp3:rw
+#      - /home/${USER}/Music/m4a:/m4a:rw
+#      - /home/${USER}/Music/ogg:/ogg:rw
