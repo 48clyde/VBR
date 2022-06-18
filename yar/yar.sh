@@ -54,15 +54,13 @@ while true; do
 	# From a workflow standpoint, it might be better to just use datetime;
 	# I stack my CDs in the order I rip, so being able to sort by time
 	# might work better when tagging. But since LMS/New Music sorts that
-	# way anyway, let's go with a clean key. Since we've inherited
-	# underscores munge the id to replace spaces with underscores. Do I
-	# really want underscores?  I didn't have them in vbox.
+	# way anyway, let's go with a clean key. 
 	#
-	# Don't have a clean way to make this respond to custom munge...
+	# Don't have a clean way to make this respond to custom munge<whatever>
 	# functions in abcde.conf. Hmm.
 	dest_dir="/out/flac"
 	if [ -d "${dest_dir}/Unknown_Artist/Unknown_Album" ]; then
-	    disc_id=$(cd-discid /dev/sr0 | tr ' ' '_')
+	    disc_id=$(cd-discid /dev/sr0 | cut -d' ' -f1)
 	    cd "${dest_dir}"
 	    mv "Unknown_Artist/Unknown_Album" "Unknown_Artist/Unknown_Album_$disc_id"
 	    cd "${OLDPWD}"
