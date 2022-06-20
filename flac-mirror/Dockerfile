@@ -21,4 +21,4 @@ RUN mkdir /flac && \
    mkdir /m4a && \
    mkdir /ogg
 
-ENTRYPOINT ["python", "-u", "/mirror.py"]
+ENTRYPOINT ["python", "/mirror.py"]
