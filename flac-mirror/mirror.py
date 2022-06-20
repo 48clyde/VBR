@@ -37,7 +37,8 @@ def check_mirror_status(flac_file, mirror_format):
     # ~/Music/flac/Artist-Album/01-track.flac -> Artist-Album/01-track
     #
     rel_name = os.path.relpath(flac_file,  flac_dir)[:-4]
-    
+
+    print(f'Checking flac_file {flac_file} flac_dir {flac_dir} yields rel_name {rel_name}')
     
     #
     # Workout the target mirrored file name.  If it doesn't exist
@@ -47,6 +48,8 @@ def check_mirror_status(flac_file, mirror_format):
     #
     mirror_file_name = os.path.join(mirror_format['DIR'], "{}{}".format(rel_name, mirror_format['EXT'].lower()))
     if not os.path.isfile(mirror_file_name):
+        print(f'mirroring to {mirror_file_name}')
+
         mirror_dir_name = os.path.dirname(mirror_file_name)
         if not os.path.isdir(mirror_dir_name):
             os.makedirs(mirror_dir_name)
@@ -117,6 +120,8 @@ def scan_flac_dir():
 
 
 if __name__ == "__main__":
+    print("Environment:")
+    print(environ)
     #
     # Check what, if any formats are required to be mirrored
     #
