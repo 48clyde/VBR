@@ -140,3 +140,44 @@ services:
       - /home/${USER}/Music/mp3:/mp3:rw
       - /home/${USER}/Music/m4a:/m4a:rw
       - /home/${USER}/Music/ogg:/ogg:rw
+ 
+  # 
+  # Allow read/write access to music from around my personal network
+  # If I'm clever, it'll only allow writes to flac/ 
+  # 
+  samba:
+    image: servercontainers/samba
+    restart: unless-stopped
+    network_mode: host
+    # uncomment to solve bug: https://github.com/ServerContainers/samba/issues/50 - wsdd2 only - not needed for samba
+    cap_add:
+      - CAP_NET_ADMIN
+    environment:
+      MODEL: 'TimeCapsule'
+      AVAHI_NAME: Music
+
+      SAMBA_CONF_WORKGROUP: workgroup
+      SAMBA_CONF_LOG_LEVEL: 3
+
+      # uncomment to disable optional services
+      #WSDD2_DISABLE: 1
+      #AVAHI_DISABLE: 1
+
+      GROUP_music: 1000
+
+#      ACCOUNT_alice: ${ALICE_SAMBA_PASS}
+#      UID_alice: 1000
+#      GROUPS_alice: music
+#
+#      ACCOUNT_bob: ${BOB_SAMBA_PASS}
+#      UID_bob: 1001
+#      GROUPS_bob: music
+
+      # SAMBA_VOLUME_CONFIG_music: "[Music Editing]; path=/shares/Music; valid users = alice, bob; guest ok = no; read only = no; browseable = yes; force group = music"
+      SAMBA_VOLUME_CONFIG_music_ro: "[Music]; path=/home/shares/Music; guest ok = yes; read only = yes; browseable = yes; force group = music"
+      
+    volumes:
+      - /etc/avahi/services/:/external/avahi
+      # avoid loops
+      #
+      - ./home/${USER}/Music:/shares/Music
