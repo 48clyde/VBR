@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Get the required extras and clean up
 #
 RUN apt-get update -y && \
-  apt-get install -qy abcde cdparanoia eject flac netcat setcd sdparm eyed3 lame && \
+  apt-get install -qy abcde cdparanoia eject flac netcat setcd sdparm eyed3 lame cd-discid && \
   apt-get remove -qy postfix && \
   apt-get -qy clean && \
   apt-get -qy purge && \

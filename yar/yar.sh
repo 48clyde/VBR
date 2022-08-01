@@ -41,6 +41,31 @@ while true; do
         #
         #
         /usr/bin/abcde -N -d ${CDROM} -o flac -c /etc/abcde-local.conf
+
+	# If it couldn't find the album in CDDB (or whatever's configured
+	# in abcde-local.conf), it'll create an Unknown_Artist/Unkown_Album directory.
+	# Then the *next one* like that will overwrite files in there.
+	# So move it to someplace unique.  The pattern match here is intended
+	# to support both my convention (directory per artist) and the default.
+	#
+	# It's handy that we haven't been able to eject yet :)
+	# Taken from https://unix.stackexchange.com/a/287851
+	#
+	# From a workflow standpoint, it might be better to just use datetime;
+	# I stack my CDs in the order I rip, so being able to sort by time
+	# might work better when tagging a batch. But since LMS/New Music sorts
+	# that way anyway, let's go with a clean key. 
+	#
+	# Don't have a clean way to make this respond to custom munge<whatever>
+	# functions in abcde.conf, so if you don't like spaces in filenames,
+	# you'll need to change the unknown_album value here to match what your
+	# abcde.conf says.
+	flac_root_fullpath="/out/flac"
+	unknown_album="Unknown Artist/Unknown Album"
+	if [ -d "${flac_root_fullpath}/${unknown_album}" ]; then
+	    disc_id=$(cd-discid /dev/sr0 | cut -d' ' -f1)
+	    mv "${flac_root_fullpath}/${unknown_album}" "${flac_root_fullpath}/${unknown_album}_${disc_id}"
+	fi
         
         #
         # Tell LMS to rescan the library to pick-up these new files
